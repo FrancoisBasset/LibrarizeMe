@@ -1,0 +1,27 @@
+{
+  "name": "librairizeme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FrancoisBasset/LibrarizeMe.git"
+  },
+  "author": "Raphael et Francois",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FrancoisBasset/LibrarizeMe/issues"
+  },
+  "homepage": "https://github.com/FrancoisBasset/LibrarizeMe#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "mysql": "^2.13.0",
+    "scanf": "^0.7.3",
+    "sequelize": "^3.30.4"
+  }
+}
