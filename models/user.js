@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
 		phoneNumber: {
 			type: DataTypes.STRING
 		},
-		password: {
+		hashedPassword: {
 			type: DataTypes.STRING
 		},
 		newsletter: {
