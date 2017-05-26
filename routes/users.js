@@ -9,32 +9,47 @@ const validator = require("validator");
 const request = require("request");
 
 router.post("/inscription", function(req, res, next) {
+	res.type("html");
 	if (!validator.isEmail(req.body.emailAddress1)) {
-		res.type("html");
 		res.send("It's not a mail address");
-		return;
+	}
+	if (req.body.emailAddress1 != req.body.emailAddress2) {
+		res.send("Email addresses are not the same");
+	}
+	if (req.body.password1.length < 8) {
+		res.send("Password must contains at least 8 characters")
+	}
+	if (req.body.password1 != req.body.password2) {
+		res.send("Passwords are not the same");
 	}
 
-	var addressExists = User.find({
+	User.find({
 		"where": {
-			"emailAddress": req.body.emailAddress1
+			emailAddress: req.body.emailAddress1
 		}
-	}).then(function(user) {
-		if (user) {
-			res.type("html");
+	}).then(user => {
+		if (user)
 			res.send("Email address is already used");
-			//addressExists = true;
-			console.log(addressExists);
-			return true;
+		else {
+
+			return User.create({
+				emailAddress: req.body.emailAddress1,
+				hashedPassword: bcrypt.hashSync(req.body.password1, 5)
+			}).then(u => {
+				res.send(u);
+			}).catch(err => { res.send({msg: 'nok', err: err}); });
+
+			//var hashedPassword = bcrypt.hashSync(req.body.password1, 5);
+			// res.send("Email address is not used");
+			// console.log("Email address not used");
 		}
-	});
+	}).catch(err => { throw err; });
 
-	if (addressExists) {
+	/*if (addressExists) {
 		return;
-	}
+	}*/
 
-	console.log(addressExists);
-	console.log("continue");
+	// console.log("continue");
 
 	/*const result = request.post('http://127.0.0.1:3000/users/emailAddressAlreadyExists').form(req);
 	res.type("html");
@@ -53,27 +68,9 @@ router.post("/inscription", function(req, res, next) {
 
 	//console.log(hasSameEmailAddress(req.body.emailAddress1));
 
-	if (req.body.emailAddress1 != req.body.emailAddress2) {
-		res.type("html");
-		res.send("Email addresses are not the same");
-		return;
-	}
 
-	if (req.body.password1.length < 8) {
-		res.type("html");
-		res.send("Password must contains at least 8 characters")
-		return;
-	}
-
-	if (req.body.password1 != req.body.password2) {
-		res.type("html");
-		res.send("Passwords are not the same");
-		return;
-	}
-
-	var hashedPassword = bcrypt.hashSync(req.body.password1, 5);
 	//if (addressExists == false) {
-		User.create({
+		/*User.create({
 			emailAddress: req.body.emailAddress1,
 			hashedPassword: hashedPassword
 		}).then(function(user) {
@@ -85,13 +82,13 @@ router.post("/inscription", function(req, res, next) {
 			}
 		}).catch(function(err) {
 			console.log(err);
-		});
+		});*/
 	/*}
 	else{
 		console.log("EmailAdress pas bonne");
 	}*/
 })
-
+	
 /*router.post("/create", function(req, res, next) {
 	if (!validator.isEmail(req.body.emailAddress)) {
 		res.type("html");
