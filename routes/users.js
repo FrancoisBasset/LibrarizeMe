@@ -6,8 +6,68 @@ const models = require("../models");
 const User = models.User;
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const request = require("request");
 
-router.post("/create", function(req, res, next) {
+router.post("/inscription", function(req, res, next) {
+	if (!validator.isEmail(req.body.emailAddress1)) {
+		res.type("html");
+		res.send("It's not a mail address");
+		return;
+	}
+
+	const result = request.post('http://127.0.0.1:3000/users/emailAddressAlreadyExists').form(req);
+	res.type("html");
+	res.send(result);
+
+	//request.post("http://127.0.0.1/users/emailAddressAlreadyExists").form(req);
+	/*if (hasSameEmailAddress(req.body.emailAddress1)) {
+		res.type("html");
+		res.send("Account with same email address already exists");
+		console.log(hasSameEmailAddress(req.body.emailAddress1));
+		return;
+	}*/
+
+	//res.type("html");
+	//res.send(result);
+
+	//console.log(hasSameEmailAddress(req.body.emailAddress1));
+
+	if (req.body.emailAddress1 != req.body.emailAddress2) {
+		res.type("html");
+		res.send("Email addresses are not the same");
+		return;
+	}
+
+	if (req.body.password1.length < 8) {
+		res.type("html");
+		res.send("Password must contains at least 8 characters")
+		return;
+	}
+
+	if (req.body.password1 != req.body.password2) {
+		res.type("html");
+		res.send("Passwords are not the same");
+		return;
+	}
+
+	var hashedPassword = bcrypt.hashSync(req.body.password1, 5);
+
+	User.create({
+		emailAddress: req.body.emailAddress1,
+		hashedPassword: hashedPassword
+	}).then(function(user) {
+		res.type("html");
+		if (user) {
+			res.send("Success");
+		} else {
+			res.send("Fail");
+		}
+	}).catch(function(err) {
+		console.log(err);
+	});
+})
+
+/*router.post("/create", function(req, res, next) {
 	if (!validator.isEmail(req.body.emailAddress)) {
 		res.type("html");
 		res.send("It's not a mail address");
@@ -26,10 +86,15 @@ router.post("/create", function(req, res, next) {
 		return;
 	}
 
+	if (hasSameEmailAddress(req.body.emailAddress)) {
+		res.type("html");
+		res.send("Account with same email address already exists");
+		return;
+	}
+
 	console.log(hasSameEmailAddress(req.body.emailAddress));
 
 	var hashedPassword = bcrypt.hashSync(req.body.password, 5);
-	console.log(hashedPassword);
 
 	User.create({
 		handle: req.body.handle,
@@ -50,7 +115,7 @@ router.post("/create", function(req, res, next) {
 	}).catch(function(err) {
 		console.log(err);
 	})
-});
+});*/
 
 router.post("/changePassword", function(req, res, next) {
 	User.find({
@@ -78,18 +143,20 @@ router.post("/correctPassword", function(req, res, next) {
 	});
 });
 
-const hasSameEmailAddress = function(address) {
-	User.find({
+router.post("/emailAddressAlreadyExists", function(req, res, next) {
+	res.type("html");
+
+	User.findOne({
 		"where": {
-			emailAddress: address
+			emailAddress: req.body.emailAddress1
 		}
 	}).then(function(user) {
-		return true;
-	}).catch(function(err) {
-		return err;
+		if (user) {
+			res.send(true);
+		} else {
+			res.send(false);
+		}
 	});
-
-	return "vgujvyh";
-};
+});
 
 module.exports = router;
