@@ -15,9 +15,30 @@ router.post("/inscription", function(req, res, next) {
 		return;
 	}
 
-	const result = request.post('http://127.0.0.1:3000/users/emailAddressAlreadyExists').form(req);
+	var addressExists = User.find({
+		"where": {
+			"emailAddress": req.body.emailAddress1
+		}
+	}).then(function(user) {
+		if (user) {
+			res.type("html");
+			res.send("Email address is already used");
+			//addressExists = true;
+			console.log(addressExists);
+			return true;
+		}
+	});
+
+	if (addressExists) {
+		return;
+	}
+
+	console.log(addressExists);
+	console.log("continue");
+
+	/*const result = request.post('http://127.0.0.1:3000/users/emailAddressAlreadyExists').form(req);
 	res.type("html");
-	res.send(result);
+	res.send(result);*/
 
 	//request.post("http://127.0.0.1/users/emailAddressAlreadyExists").form(req);
 	/*if (hasSameEmailAddress(req.body.emailAddress1)) {
@@ -51,20 +72,24 @@ router.post("/inscription", function(req, res, next) {
 	}
 
 	var hashedPassword = bcrypt.hashSync(req.body.password1, 5);
-
-	User.create({
-		emailAddress: req.body.emailAddress1,
-		hashedPassword: hashedPassword
-	}).then(function(user) {
-		res.type("html");
-		if (user) {
-			res.send("Success");
-		} else {
-			res.send("Fail");
-		}
-	}).catch(function(err) {
-		console.log(err);
-	});
+	//if (addressExists == false) {
+		User.create({
+			emailAddress: req.body.emailAddress1,
+			hashedPassword: hashedPassword
+		}).then(function(user) {
+			res.type("html");
+			if (user) {
+				res.send("Success");
+			} else {
+				res.send("Fail");
+			}
+		}).catch(function(err) {
+			console.log(err);
+		});
+	/*}
+	else{
+		console.log("EmailAdress pas bonne");
+	}*/
 })
 
 /*router.post("/create", function(req, res, next) {
@@ -143,7 +168,21 @@ router.post("/correctPassword", function(req, res, next) {
 	});
 });
 
-router.post("/emailAddressAlreadyExists", function(req, res, next) {
+/*const emailAddressAlreadyExists = function(emailAddress1) {
+	User.findOne({
+		"where": {
+			emailAddress: emailAddress1
+		}
+	}).then(function(user) {
+		if (user) {
+			res.send(true);
+		} else {
+			res.send(false);
+		}
+	});
+}*/
+
+/*router.post("/emailAddressAlreadyExists", function(req, res, next) {
 	res.type("html");
 
 	User.findOne({
@@ -157,6 +196,6 @@ router.post("/emailAddressAlreadyExists", function(req, res, next) {
 			res.send(false);
 		}
 	});
-});
+});*/
 
 module.exports = router;

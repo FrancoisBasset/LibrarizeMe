@@ -1,6 +1,6 @@
 "use strict";
 
-var amazon = require("amazon-product-api");
+/*var amazon = require("amazon-product-api");
 
 const client = amazon.createClient({
   awsId: "aws ID",
@@ -14,4 +14,4 @@ client.itemSearch({
   console.log(results);
 }).catch(function(err){
   console.log(err);
-});
+});*/
