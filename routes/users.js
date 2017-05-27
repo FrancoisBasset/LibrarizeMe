@@ -8,6 +8,8 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const request = require("request");
 
+let session = require('express-session');
+
 router.post("/inscription", function(req, res, next) {
 	res.type("html");
 	if (!validator.isEmail(req.body.emailAddress1)) {
@@ -22,7 +24,6 @@ router.post("/inscription", function(req, res, next) {
 	if (req.body.password1 != req.body.password2) {
 		res.send("Passwords are not the same");
 	}
-
 	User.find({
 		"where": {
 			emailAddress: req.body.emailAddress1
@@ -45,6 +46,7 @@ router.post("/inscription", function(req, res, next) {
 		}
 	}).catch(err => { throw err; });
 
+})
 	/*if (addressExists) {
 		return;
 	}*/
@@ -87,7 +89,6 @@ router.post("/inscription", function(req, res, next) {
 	else{
 		console.log("EmailAdress pas bonne");
 	}*/
-})
 	
 /*router.post("/create", function(req, res, next) {
 	if (!validator.isEmail(req.body.emailAddress)) {
@@ -139,10 +140,43 @@ router.post("/inscription", function(req, res, next) {
 	})
 });*/
 
-router.post("/changePassword", function(req, res, next) {
+
+let sess;
+
+router.post("/login", function(req, res, next) {
+	res.type("json");
+
+	let emailSend = req.body.emailAddress1; 	
+	let passwordSend = req.body.password1;
+
 	User.find({
 		where: {
-			emailAddress : req.body.emailAddress
+			emailAddress: emailSend
+		}
+	}).then(user => {
+		if (user){
+			console.log(bcrypt.compare(passwordSend, user.hashedPassword));
+
+			if (bcrypt.compare(passwordSend, user.hashedPassword) == true) {
+				console.log('BLOUP');
+				sess = req.session;
+				sess.email = req.body.emailAddress1
+				res.send({msg: 'you are connected'});
+			} else {
+				res.send({msg: 'wrong login infos'});
+			}
+		} else {
+			res.send({msg: 'you are not connected'});
+		}
+	}).catch(err => { res.send({msg: 'nok', err: err}); });
+});
+
+router.post("/changePassword", function(req, res, next) {
+	res.type("html");
+	User.find({
+		where: {
+			emailAddress : req.body.emailAddress1,
+			password1: req.body.password1
 		}
 	}).then(function(user) {
 		res.send(user.hashedPassword);
