@@ -12,29 +12,31 @@ const request = require("request");
 let sess;
 
 router.post("/inscription", (req, res, next) => {
-	res.type("html");
+	res.type("json");
 
 	if (!validator.isEmail(req.body.emailAddress1)) {
-		res.send("It's not a mail address");
-		return;
+		res.send({
+			message: "It's not a mail address"
+		});
 	}
 
 	if (req.body.emailAddress1 !== req.body.emailAddress2) {
-		res.send("Email addresses are not the same");
-		return;
+		res.send({
+			message: "Email addresses are not the same"
+		});
 	}
 
 	if (req.body.password1.length < 8) {
-		res.send("Password must contains at least 8 characters")
-		return;
+		res.send({
+			message: "Password must contains at least 8 characters"
+		});
 	}
 
 	if (req.body.password1 !== req.body.password2) {
-		res.send("Passwords are not the same");
-		return;
+		res.send({
+			message: "Passwords are not the same"
+		});
 	}
-
-	var hashedPassword = bcrypt.hashSync(req.body.password1, 5);
 
 	User.find({
 		"where": {
@@ -42,25 +44,36 @@ router.post("/inscription", (req, res, next) => {
 		}
 	}).then(user => {
 		if (user) {
-			res.send("Email address is already used");
+			res.send({
+				message: "Email address is already used"
+			});
 		} else {
 			User.create({
 				emailAddress: req.body.emailAddress1,
-				hashedPassword: hashedPassword
+				hashedPassword: bcrypt.hashSync(req.body.password1, 5)
 			}).then(user => {
 				if (user) {
-					res.send("Success");
+					res.send({
+						message: "Success"
+					});
 				} else {
-					res.send("Fail");
+					res.send({
+						message: "Fail"
+					});
 				}
 			}).catch(err => {
-				console.log(err);
+				res.send({
+					err: err
+				});
 			});
 		}
 	}).catch(err => {
-		res.send({ msg: 'Unable to search user', err: err });
+		res.send({
+			msg: 'Unable to search user',
+			err: err
+		});
 	});
-})
+});
 
 router.post("/connect", (req, res, next) => {
 	User.find({
@@ -126,7 +139,7 @@ router.post("/edit", (req, res, next) => {
 
 	User.findOne({
 		"where": {
-			"emailAddress": req.body.emailAddress
+			"emailAddress": req.body.existingEmailAddress
 		}
 	}).then(user => {
 		if (user) {
