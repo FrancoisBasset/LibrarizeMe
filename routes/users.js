@@ -145,6 +145,7 @@ router.post("/inscription", function(req, res, next) {
 router.post("/login", function(req, res, next) {
 	res.type("json");
 
+
 	let emailSend = req.body.emailAddress1; 	
 	let passwordSend = req.body.password1;
 
@@ -157,36 +158,62 @@ router.post("/login", function(req, res, next) {
 			bcrypt.compare(passwordSend, user.hashedPassword, function(err, lol) {
 				if(lol == true){
 					sess = req.session;
-					sess.userid = user.id;
+					// sess.userid = user.id;
                     sess.firstName = user.firstName;
                     sess.lastName = user.lastName;
 					sess.emailAddress = user.emailAddress;
-					console.log(sess.emailAddress)
-					console.log(sess.userid)
-					res.json({msg: 'you are connected'});
-				    // res == true
-			    } else{
+					res.json({Session: sess, User: user, msg: 'you are connected'});
+			    } else
 					res.json({msg: 'wrong login infos'});
-			    }
 			});
-		} else {
+		} else 
 			res.json({msg: 'you are not connected'});
-		}
 	}).catch(err => { res.json({msg: 'nok', err: err}); });
 });
 
+router.post("/logout", function(req, res, next) {
+	res.type("json");
+	sess = req.session;
+	if(!sess.emailAddress){
+		console.log(sess.emailAddress1);
+		console.log("chcecek");
+		console.log(sess.emailAddress);
+		res.json({ msg: 'you are not connected so you can\'t you connected '});
+	} else {
+		console.log(sess.emailAddress);
+		console.log("defefe");
+		req.session.destroy(err => {
+            if(err)
+                res.json({ msg: 'Error while trying to disconnect !', err: err });
+            else
+                res.json({ msg: 'You are disconnected !', });
+        });
+	}
+});
+
 router.post("/changePassword", function(req, res, next) {
-	res.type("html");
-	User.find({
-		where: {
-			emailAddress : req.body.emailAddress1,
-			password1: req.body.password1
-		}
-	}).then(function(user) {
-		res.send(user.hashedPassword);
-	}).catch (function(err) {
-		res.send("Cette adresse mail n'existe pas");
-	});
+	res.type("json");
+	sess = req.body;
+	if (!sess.emailAddress1) {
+		console.log(sess.emailAddress1);
+		console.log(sess.emailAddress);
+		console.log("defefe");
+		res.json({msg: 'Not connected'});
+	} else {
+
+		User.find({
+			where: {
+				emailAddress1 : req.body.emailAddress1,
+				password1: req.body.password1
+			}
+		}).then(function(user) {
+			res.send(user.hashedPassword);
+		}).catch (function(err) {
+			res.send("Cette adresse mail n'existe pas");
+		});
+	}
+
+	
 });
 
 router.post("/correctPassword", function(req, res, next) {

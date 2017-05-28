@@ -1,17 +1,25 @@
 "use strict";
 
-/*var amazon = require("amazon-product-api");
+const express = require("express");
+const router = express.Router();
+const models = require("../models");
+const request = require("request");
+let session = require('express-session');
+const Products = models.Products;
+let sess;
 
-const client = amazon.createClient({
-  awsId: "aws ID",
-  awsSecret: "aws Secret",
-  awsTag: "aws Tag"
-});
+router.post("/search_by_title", function(req, res, next) {
+	res.type("json");
+	Products.find({
+		"where": {
+			Title: req.body.title1
+		}
+	}).then(products => {
+		if (products)
+			res.send({msg: 'We find !'});
+		else {
+			res.send({msg: 'We don\'t find !'});
+		}
+	}).catch(err => { throw err; });
 
-client.itemSearch({
-  keywords: "louis"
-}).then(function(results){
-  console.log(results);
-}).catch(function(err){
-  console.log(err);
-});*/
+})
