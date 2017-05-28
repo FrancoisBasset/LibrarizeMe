@@ -3,12 +3,12 @@
 const express = require("express");
 const router = express.Router();
 const models = require("../models");
-const User = models.User;
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const request = require("request");
-
 let session = require('express-session');
+const User = models.User;
+let sess;
 
 router.post("/inscription", function(req, res, next) {
 	res.type("html");
@@ -141,7 +141,6 @@ router.post("/inscription", function(req, res, next) {
 });*/
 
 
-let sess;
 
 router.post("/login", function(req, res, next) {
 	res.type("json");
@@ -155,20 +154,25 @@ router.post("/login", function(req, res, next) {
 		}
 	}).then(user => {
 		if (user){
-			console.log(bcrypt.compare(passwordSend, user.hashedPassword));
-
-			if (bcrypt.compare(passwordSend, user.hashedPassword) == true) {
-				console.log('BLOUP');
-				sess = req.session;
-				sess.email = req.body.emailAddress1
-				res.send({msg: 'you are connected'});
-			} else {
-				res.send({msg: 'wrong login infos'});
-			}
+			bcrypt.compare(passwordSend, user.hashedPassword, function(err, lol) {
+				if(lol == true){
+					sess = req.session;
+					sess.userid = user.id;
+                    sess.firstName = user.firstName;
+                    sess.lastName = user.lastName;
+					sess.emailAddress = user.emailAddress;
+					console.log(sess.emailAddress)
+					console.log(sess.userid)
+					res.json({msg: 'you are connected'});
+				    // res == true
+			    } else{
+					res.json({msg: 'wrong login infos'});
+			    }
+			});
 		} else {
-			res.send({msg: 'you are not connected'});
+			res.json({msg: 'you are not connected'});
 		}
-	}).catch(err => { res.send({msg: 'nok', err: err}); });
+	}).catch(err => { res.json({msg: 'nok', err: err}); });
 });
 
 router.post("/changePassword", function(req, res, next) {
@@ -228,5 +232,6 @@ router.post("/correctPassword", function(req, res, next) {
 		}
 	});
 });*/
+
 
 module.exports = router;

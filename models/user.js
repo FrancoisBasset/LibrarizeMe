@@ -34,6 +34,15 @@ module.exports = function(sequelize, DataTypes) {
 	}, {
 		paranoid: true,
 		freezeTableName: true
+	}, {
+		 instanceMethods: {
+                responsify: function() {
+                    return {
+                        name: this.id + ' : ' + this.firstName + ' ' + this.lastName,
+                        email: this.emailAddress
+                    };
+                }
+            }
 	});
 
 	return User;
