@@ -8,10 +8,18 @@ const bodyParser = require('body-parser');
 const index = require('./routes/index');
 const users = require("./routes/users");
 
+const session = require("express-session")
+
 const models = require("./models");
 models.sequelize.sync();
 
 const app = express();
+
+app.use(session({
+    secret: 'nfgnhfns',
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.listen("3000", function() {
 	console.log("Port 3000");
