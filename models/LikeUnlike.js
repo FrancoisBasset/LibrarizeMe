@@ -1,44 +1,19 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-	const Products = sequelize.define("Products", {
-		productId: {
+	const LikeUnlike = sequelize.define("LikeUnlike", {
+		likeId: {
 			type: DataTypes.BIGINT,
 			primaryKey: true,
 			autoIncrement: true
+		},productId: {
+			type: DataTypes.BIGINT
 		},
-		type: {
+		emailAddress: {
 			type: DataTypes.STRING
 		},
-		title: {
-			type: DataTypes.STRING
-		},
-		barcode: {
-			type: DataTypes.STRING
-		},
-		price: {
-			type: DataTypes.DOUBLE
-		},
-		editor: {
-			type: DataTypes.STRING
-		},
-		platform: {
-			type: DataTypes.STRING
-		},
-		artist: {
-			type: DataTypes.STRING
-		},
-		author: {
-			type: DataTypes.STRING
-		},
-		director: {
-			type: DataTypes.STRING
-		},
-		actor: {
-			type: DataTypes.STRING
-		},
-		description: {
-			type: DataTypes.STRING
+		like: {
+			type: DataTypes.BIGINT
 		}
 	}, {
 		paranoid: true,
@@ -58,5 +33,5 @@ module.exports = function(sequelize, DataTypes) {
             }
 	});
 
-	return Products;
+	return LikeUnlike;
 };

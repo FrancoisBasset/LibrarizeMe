@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const express_session = require('express-session');
 const index = require('./routes/index');
 const users = require("./routes/users");
+const products = require("./routes/products");
+const LikeUnlike = require("./routes/likeunlike");
 
 const models = require("./models");
 models.sequelize.sync();
@@ -42,6 +44,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use("/users", users);
+app.use("/products", products);
+app.use("/LikeUnlike", LikeUnlike);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

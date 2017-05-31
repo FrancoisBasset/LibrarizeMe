@@ -158,7 +158,7 @@ router.post("/login", function(req, res, next) {
 			bcrypt.compare(passwordSend, user.hashedPassword, function(err, lol) {
 				if(lol == true){
 					sess = req.session;
-					// sess.userid = user.id;
+					sess.userid = user.id;
                     sess.firstName = user.firstName;
                     sess.lastName = user.lastName;
 					sess.emailAddress = user.emailAddress;
