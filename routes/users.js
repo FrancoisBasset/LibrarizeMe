@@ -14,41 +14,47 @@ let sess;
 router.post("/login", function(req, res, next) {
 	res.type("json");
 
-	User.findOne({
+	let emailSend = req.body.emailAddress1;
+	let passwordSend = req.body.password1;
+
+	User.find({
 		where: {
-			emailAddress: req.body.emailAddress
+			emailAddress: emailSend
 		}
 	}).then(user => {
-		if (user) {
-			if (bcrypt.compareSync(req.body.password, user.hashedPassword)) {
-				sess = req.session;
-
-				sess.firstName = user.firstName;
-				sess.lastName = user.lastName;
-				sess.emailAddress = user.emailAddress;
-
-				console.log(sess);
-
-				res.json({
-					msg: 'You are connected'
-				});
-			} else {
-				res.json({
-					msg: 'Wrong login infos'
-				});
-			}
-		} else {
-			res.json({
-				msg: 'You are not connected'
+		if (user){
+			bcrypt.compare(passwordSend, user.hashedPassword, function(err, lol) {
+				if(lol == true){
+					sess = req.session;
+					sess.userId = user.id;
+                    			sess.firstName = user.firstName;
+                    			sess.lastName = user.lastName;
+					sess.emailAddress = user.emailAddress;
+					res.json({Session: sess, User: user, msg: 'you are connected'});
+			    	} else
+					res.json({msg: 'wrong login infos'});
 			});
-		}
-	}).catch(err => {
-		console.log(err);
-		res.json({
-			msg: 'not ok',
-			err: err
-		});
-	});
+		} else
+			res.json({msg: 'you are not connected'});
+	}).catch(err => { res.json({msg: 'nok', err: err}); });
+});
+
+router.post("/logout", function(req, res, next) {
+	res.type("json");
+	sess = req.session;
+	if(!sess.emailAddress){
+		console.log(sess.emailAddress1);
+		console.log(sess.emailAddress);
+		res.json({ msg: 'you are not connected so you can\'t you connected '});
+	} else {
+		console.log(sess.emailAddress);
+		req.session.destroy(err => {
+            		if(err)
+                	res.json({ msg: 'Error while trying to disconnect !', err: err });
+            		else
+                	res.json({ msg: 'You are disconnected !', });
+        	});
+	}
 });
 
 router.post("/inscription", (req, res, next) => {
