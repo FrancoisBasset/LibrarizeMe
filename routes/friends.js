@@ -203,27 +203,32 @@ router.post("/getFriendsProducts", (req, res, next) => {
 	}
 
 	FriendRelation.findAll({
+		attributes: ["friendId"],
 		where: {
 			userId: sess.userId
 		}
 	}).then(friends => {
-		if (friends.length > 0) {
-			User.findAll({
-				id: friends.userId
-			}).then(friend => {
-				res.json({
-					friends: friend
-				});
-			}).catch(err => {
-				res.json({
-					err: err
-				});
-			});
-		} else {
-			res.json({
+		var friendsId = [];
 
-			});
+		for (var i = 0; i < friends.length; i++) {
+			friendsId.push(friends[i].friendId);
 		}
+
+		res.json(friendsId);
+
+		User.findAll({
+			where: {
+				id: {
+					$in: friendsId
+				}
+			}
+		}).then(friendsR => {
+			res.json(friendsR);
+		}).catch(err => {
+			res.json({
+				err: err
+			});
+		});
 	}).catch(err => {
 		err: err
 	});
