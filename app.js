@@ -9,6 +9,7 @@ const users = require("./routes/users");
 const friends = require("./routes/friends");
 const products = require("./routes/products");
 const LikeUnlike = require("./routes/likeunlike");
+const borrows = require("./routes/borrows");
 
 const session = require("express-session")
 
@@ -44,6 +45,7 @@ app.use("/users", users);
 app.use("/friends", friends);
 app.use("/products", products);
 app.use("/LikeUnlike", LikeUnlike);
+app.use("/borrows", borrows);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
