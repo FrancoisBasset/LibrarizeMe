@@ -43,7 +43,7 @@ router.post("/borrowProduct", (req, res, next) => {
 			}).then(borrow => {
 				if (borrow) {
 					res.json({
-						message: "You have already borrow this product to your friend"
+						message: "You have already borrowed this product to your friend"
 					});
 				} else {
 					Borrow.create({
@@ -79,7 +79,45 @@ router.post("/borrowProduct", (req, res, next) => {
 			err: err
 		});
 	});
+});
 
+router.post("/giveBack", (req, res, next) => {
+	res.type("json");
+	sess = req.session;
+
+	if (!sess.emailAddress) {
+		res.json({
+			message: "You are not connected"
+		});
+	}
+
+	Borrow.findOne({
+		where: {
+			userId: sess.userId,
+			friendId: req.body.friendId,
+			productId: req.body.productId
+		}
+	}).then(borrow => {
+		if (borrow) {
+			borrow.destroy().then(borrow => {
+				res.json({
+					message: "You gave back the product"
+				});
+			}).catch(err => {
+				res.json({
+					err: err
+				});
+			});
+		} else {
+			res.json({
+				message: "You don't borrowed this product to your friend"
+			});
+		}
+	}).catch(err => {
+		res.json({
+			err: err
+		});
+	});
 });
 
 router.post("/showBorrows", (req, res, next) => {
@@ -88,9 +126,11 @@ router.post("/showBorrows", (req, res, next) => {
 
 	if (!sess.emailAddress) {
 		res.json({
-			message
-		})
+			message: "You are not connected"
+		});
 	}
+
+
 });
 
 module.exports = router;
