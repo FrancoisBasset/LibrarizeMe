@@ -7,6 +7,9 @@ module.exports = function(sequelize, DataTypes) {
 			primaryKey: true,
 			autoIncrement: true
 		},
+		ownerId: {
+			type: DataTypes.STRING
+		},
 		type: {
 			type: DataTypes.STRING
 		},

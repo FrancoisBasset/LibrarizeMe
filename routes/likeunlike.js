@@ -25,7 +25,7 @@ router.post("/like_product", function(req, res, next) {
 				LikeUnlike.find({
 				"where": {
 						productId: req.body.productId1,
-						emailAddress: sess.emailAddress
+						LikerUnlikerId: sess.userid
 					}
 				}).then(likeUnlike => {
 				if (likeUnlike){
@@ -34,7 +34,7 @@ router.post("/like_product", function(req, res, next) {
 				} else {
 					 return LikeUnlike.create({
 						productId: req.body.productId1,
-						emailAddress: sess.emailAddress,
+						LikerUnlikerId: sess.userid,
 						like: 1
 						}).then(Like => {
 							res.send(Like);
@@ -64,7 +64,7 @@ router.post("/unlike_product", function(req, res, next) {
 				LikeUnlike.find({
 				"where": {
 						productId: req.body.productId1,
-						emailAddress: sess.emailAddress
+						LikerUnlikerId: sess.userid
 					}
 				}).then(likeUnlike => {
 				if (likeUnlike){
@@ -73,7 +73,7 @@ router.post("/unlike_product", function(req, res, next) {
 				} else {
 					 return LikeUnlike.create({
 						productId: req.body.productId1,
-						emailAddress: sess.emailAddress,
+						LikerUnlikerId: sess.userid,
 						like: 0
 						}).then(Like => {
 							res.send(Like);

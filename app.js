@@ -4,23 +4,23 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+
+const express_session = require('express-session');
 const index = require('./routes/index');
 const users = require("./routes/users");
 const friends = require("./routes/friends");
 const products = require("./routes/products");
 const LikeUnlike = require("./routes/likeunlike");
 const borrows = require("./routes/borrows");
-const criticism = require("./routes/criticism")
-
-const session = require("express-session")
+const Criticism = require("./routes/criticism");
 
 const models = require("./models");
 models.sequelize.sync();
 
 const app = express();
 
-app.use(session({
-    secret: 'nfgnhfns',
+app.use(express_session({
+    secret: 'AsdSDFgGlDSfAOsfgrgZaFznSndjgdC',
     resave: true,
     saveUninitialized: true
 }));
@@ -29,6 +29,9 @@ app.listen("3000", function() {
 	console.log("Port 3000");
 });
 
+/**
+ * View engine setup (PUG)
+ */
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -47,7 +50,7 @@ app.use("/friends", friends);
 app.use("/products", products);
 app.use("/LikeUnlike", LikeUnlike);
 app.use("/borrows", borrows);
-app.use("/criticism", criticism);
+app.use("/Criticism", Criticism);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

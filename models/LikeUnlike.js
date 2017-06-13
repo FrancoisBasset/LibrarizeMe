@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
 		},productId: {
 			type: DataTypes.BIGINT
 		},
-		emailAddress: {
-			type: DataTypes.STRING
+		LikerUnlikerId: {
+			type: DataTypes.BIGINT
 		},
 		like: {
 			type: DataTypes.BIGINT
