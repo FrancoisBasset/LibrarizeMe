@@ -31,7 +31,6 @@ router.post("/criticism_product", function(req, res, next) {
 				}).then(criticismProduct => {
 				if (criticismProduct){
 					criticismProduct.updateAttributes({criticismDetails: newCriticism})
-					console.log(sess.userid);
 					res.json({ msg: 'update criticism'});	
 				} else {
 					console.log("hello");
