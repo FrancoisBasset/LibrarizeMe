@@ -129,8 +129,6 @@ router.post("/showBorrows", (req, res, next) => {
 			message: "You are not connected"
 		});
 	}
-
-
 });
 
 module.exports = router;
